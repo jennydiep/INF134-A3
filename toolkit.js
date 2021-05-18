@@ -1,119 +1,164 @@
-SVG.on(document, 'DOMContentLoaded', function(){
-    var draw = SVG().addTo('body').size('1000px','1000px');
-    var window = draw.group();
-    window.rect(400,400).stroke("orange").fill("white")
-    window.click(function(event){
-      console.log("Window")
-      console.log(event)
-    })
+// TODO: bugs to fix: when creating a widget (for ex in demo.js) if you move the widget before using setText will not place the text on the widget
 
-    var TextBox = function(draw){
-      var textbox = draw.group();
-      var rect = textbox.rect(200, 30).fill("white").stroke("black")
-      var text = textbox.text("hello").move(2,4);
-      // var caret = textbox.line(45, 2.5, 45, 25).stroke({ width: 1, color: "black" })
-      return {
-          move: function(x, y) {
-              rect.move(x, y);
-          },
-          src: function(){
-              return textbox;
-          }
+import {SVG} from './svg.min.js';
+
+var primary = '#9370DB'
+var darker = '#7659b3'
+var darkest = '#5c458c'
+var lighter = '#E6E6FA'
+var lighter_dim = '#cecede'
+
+var buttonColors = {'mouseover': darker, 'mouseout': primary, 'mousedown': darkest, 'mouseup': darker};
+var uncheckedColors = {'mouseover': lighter_dim, 'mouseout': lighter, 'mousedown': darker, 'mouseup': lighter_dim};
+var checkedColors = {'mouseover': darker, 'mouseout': primary, 'mousedown': lighter_dim, 'mouseup': lighter};
+
+var font_family = 'Georgia';
+// var size = "25%";
+
+var MyToolkit = (function() {
+
+    var Button = function(){
+      var draw = SVG().addTo('body');
+      var button = draw.group();
+      var clickEvent = null;
+      var stateEvent = null;
+
+      var rect = button.rect(100,50).fill({color: primary});
+      button.css({cursor: 'pointer'});
+
+      var buttonText = button.text('').fill({ color: lighter});
+
+      buttonActions(button, rect, buttonColors, transition);
+      button.click(function(event){
+        action(darker, 100, rect);
+        if(clickEvent != null)
+            clickEvent(event)
+      });
+
+      function transition(defaultState){
+        if (stateEvent != null)
+          stateEvent(defaultState);
       }
-    }
-
-    var Button = function(draw){
-      var rect = draw.rect(100,50).fill('grey')
-      var clickEvent = null
-      var stateEvent = null
-      var defaultState = "idle"
       
-      rect.mouseover(function(){
-          this.fill({ color: 'blue'})
-          defaultState = "hover"
-          transition()
-      })
-      rect.mouseout(function(){
-          this.fill({ color: 'red'})
-          defaultState = "idle"
-          transition()
-      })
-      rect.mousedown(function(){
-          this.fill({ color: 'red'})
-          defaultState = "pressed"
-          transition()
-      })
-      rect.mouseup(function(){
-          this.fill({ color: 'red'})
-          if (defaultState == "pressed"){
-            if(clickEvent != null)
-                clickEvent(event)
-          }
-          defaultState = "up"
-          transition()
-      })
-      rect.mousemove(function(event){
-      })
-      // rect.click(function(event){
-      //     this.fill({ color: 'pink'})
-      //     if(clickEvent != null)
-      //         clickEvent(event)
-      // })
-      function transition()
-      {
-        if(stateEvent != null)
-          stateEvent.foreach(() => (r) => {r(defaultState)}
-
-          )
-          stateEvent(defaultState)
-      }
-      return {
-          move: function(x, y) {
-              rect.move(x, y);
-          },
-          stateChanged: function(eventHandler){
-            stateEvent = eventHandler 
-          },
-          onclick: function(eventHandler){
-              clickEvent = eventHandler
-          },
-          src: function(){
-              return rect;
-          },
-          setId: function(id){
-            rect.attr("id", id)
-          }
+      return { // public functions
+        setText: function(text){
+          buttonText = button.text(text).fill({ color: lighter});
+          buttonText.css({'pointer-events': 'none'});
+          buttonText.center(0.5*rect.width(), 0.5*rect.height());
+          buttonText.font({family: font_family});
+        },
+        move: function(x, y) {
+          button.move(x, y);
+        },
+        stateChanged: function(eventHandler){
+          stateEvent = eventHandler 
+        },
+        onclick: function(eventHandler){
+          clickEvent = eventHandler
+        }
       }
     }
 
-    var btn = new Button(draw)
-    btn.setId("btn1")
-    btn.move(20,20);
-    btn.onclick(function(event){
-      console.log(event)
-      console.log(event.target)
-    })
-    btn.stateChanged(function(event){
-      console.log(event)
-    })
-    btn.stateChanged(function(event){
-      //navigate to a new page
-    })
+    var CheckBox = function(){
+      var draw = SVG().addTo('body');
+      var checkbox = draw.group();
+      var rect = checkbox.rect(20,20).fill(lighter);
+      var check = false;
+      var state = 'idle'
+      var stateEvent = null;
+      var checkedEvent = null;
+      var colors = uncheckedColors;
 
-    var btn2 = new Button(draw)
-    btn2.setId("btn2")
-    btn2.move(20,100);
-    btn2.onclick(function(event){
-      console.log(event)
-      console.log(event.target)
-    })
+      // var checkboxColors = {'checked': checkedColors, 'unchecked': uncheckedColors};
 
-    var textbox = new TextBox(draw);
 
-    window.add(textbox.src);
+      var checkboxText = checkbox.text('').fill({ color: 'black'});
+      
+      // checkboxActions(rect, rect, checkboxColors, transition, checked);
+      // buttonActions(checkbox, rect, colors, transition);
+      // var buttonAction = new ButtonActions(checkbox, rect, colors, transition);
 
-    window.add(btn.src);
-    window.add(btn2.src);
-    
-    window.move(10,10)
-});
+      rect.mousedown(function(){
+        state = 'pressed';
+        transition(state);
+      });
+      rect.mouseout(function(){
+        state = 'idle';
+        transition(state);
+      });
+      rect.mouseup(function(){
+        state = 'up';
+        transition(state);
+      });
+      rect.click(function(event){
+        if(checkedEvent != null)
+          checkedEvent(event);
+        if (check){
+          check = false;
+          action(lighter, 150, rect);
+          colors = checkedColors;
+        }
+        else{
+          check = true;
+          action(primary, 150, rect);
+          colors = uncheckedColors;
+        }
+      });
+
+      function transition(defaultState){
+        if (stateEvent != null)
+          stateEvent(defaultState);
+      }
+
+      return {
+        move: function(x, y) {
+          checkbox.move(x, y)
+        },
+        setText: function(text) {
+          checkboxText = checkbox.text(text).fill({ color: 'black'});
+          checkboxText.center(0.5*rect.width(), 0.5*rect.height());
+          checkboxText.move(30, 0);
+          checkboxText.font({family: font_family});
+        },
+        stateChanged: function(eventHandler){
+          stateEvent = eventHandler 
+        },
+        oncheck: function(eventHandler){
+          checkedEvent = eventHandler
+        }
+      }
+
+    }
+return {Button, CheckBox}
+}());
+
+export{MyToolkit}
+
+function action(color, duration, object){
+  object.animate(duration, 0, 'now').attr({fill: color})
+}
+
+function buttonActions(object, parentObject, colors, transition){
+  var defaultState = 'idle';
+
+  object.mouseup(function(){
+    action(colors.mouseup, 100, parentObject);
+    defaultState = "up";
+    transition(defaultState)
+  })
+  object.mouseover(function(){
+    action(colors.mouseover, 100, parentObject);
+    defaultState = 'hover';
+    transition(defaultState);
+  })
+  object.mouseout(function(){
+    action(colors.mouseout, 100, parentObject);
+    defaultState = 'idle';
+    transition(defaultState);
+  })
+  object.mousedown(function(){
+    action(colors.mousedown, 100, parentObject);
+    defaultState = 'pressed';
+    transition(defaultState);
+  })
+}
