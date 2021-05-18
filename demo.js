@@ -3,24 +3,24 @@ import {MyToolkit} from './toolkit.js';
 // Implement a MyToolkit Button
 var btn = new MyToolkit.Button('hello');
 
-btn.setText("hello");
+btn.setText("button");
 btn.move(100,100);
 
 btn.onclick(function(e){
-	console.log(e);
+	console.log("button clicked", e);
 });
 btn.stateChanged(function(e){
-	console.log(e);
+	console.log(e, ": button");
 });
 
 var checkbox1 = new MyToolkit.CheckBox;
-checkbox1.setText('testing')
+checkbox1.setText('checkbox')
 checkbox1.move(100, 100)
 checkbox1.stateChanged(function(e){
-	console.log(e);
+	console.log(e, ": checkbox");
 });
 checkbox1.oncheck(function(e){
-	console.log(e);
+	console.log('checkbox clicked', e);
 });
 
 checkbox1.setId("1")
@@ -29,9 +29,26 @@ checkbox1.setId("1")
 // togglebox.setText('temp')
 // togglebox.move(10, 10)
 
-var radioDials = new MyToolkit.RadioDials(4);
-radioDials.setText(0, 'testing this line')
+var radioDials = new MyToolkit.RadioDials(3);
+radioDials.setText(0, 'radio dial 1')
+radioDials.setText(1, 'radio dial 2')
+radioDials.setText(2, 'radio dial 3')
 radioDials.move(100, 100)
+// radioDials.stateChanged(function(e){
+// 	console.log(e, "radiodial");
+// });
+radioDials.oncheck(function(e, i){
+	console.log(e, 'position:', i);
+});
+
+radioDials.stateChanged(function(e){
+    console.log(e, ": radio button")
+})
+
+var textBox = new MyToolkit.TextBox;
+
+textBox.move(100,100)
+
 
 // var checkbox2 = new MyToolkit.CheckBox;
 // checkbox2.move(100, 100)
