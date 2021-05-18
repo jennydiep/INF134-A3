@@ -1,5 +1,3 @@
-// TODO: bugs to fix: when creating a widget (for ex in demo.js) if you move the widget before using setText will not place the text on the widget
-
 import {SVG} from './svg.min.js';
 
 var primary = '#9370DB'
@@ -12,21 +10,25 @@ var buttonColors = {'mouseover': darker, 'mouseout': primary, 'mousedown': darke
 var uncheckedColors = {'mouseover': lighter_dim, 'mouseout': lighter, 'mousedown': darker, 'mouseup': lighter_dim};
 var checkedColors = {'mouseover': darker, 'mouseout': primary, 'mousedown': lighter_dim, 'mouseup': lighter};
 
-var font_family = 'Georgia';
+var font_family = 'courier new';
 // var size = "25%";
 
 var MyToolkit = (function() {
 
-    var Button = function(){
-      var draw = SVG().addTo('body');
+    var Button = function(draw){
       var button = draw.group();
       var clickEvent = null;
       var stateEvent = null;
+      var text = '';
 
       var rect = button.rect(100,50).fill({color: primary}).stroke({color: 'black'});
       button.css({cursor: 'pointer'});
 
       var buttonText = button.text('').fill({ color: lighter});
+      buttonText.css({'pointer-events': 'none'});
+      buttonText.x(rect.width()*0.20)
+      buttonText.y(rect.height()*0.17)
+      buttonText.font({family: font_family});
 
       buttonActions(button, rect, buttonColors, transition);
       button.click(function(event){
@@ -42,10 +44,7 @@ var MyToolkit = (function() {
       
       return { // public functions
         setText: function(text){
-          buttonText = button.text(text).fill({ color: 'black'});
-          buttonText.css({'pointer-events': 'none'});
-          buttonText.center(0.5*rect.width(), 0.5*rect.height());
-          buttonText.font({family: font_family});
+          buttonText.text(text)
         },
         move: function(x, y) {
           button.move(x, y);
@@ -78,7 +77,9 @@ var MyToolkit = (function() {
       var state = 'idle'
       var stateEvent = null;
       var checkedEvent = null;
-      var toggleboxText = null;
+      var toggleboxText = togglebox.text('').fill({ color: 'black'});
+      toggleboxText.font({family: font_family});
+      
 
       object.css({cursor: 'pointer'});
 
@@ -116,24 +117,17 @@ var MyToolkit = (function() {
 
       return {
         move: function(x, y) {
-          togglebox.move(x, y)
-          // togglebox.attr('x', x);
-          // togglebox.attr('y', y);
+          togglebox.move(x, y);
         },
         setText: function(text) {
-          toggleboxText = togglebox.text(text).fill({ color: 'black'});
-          // var x = object.width();
-          var y = object.y();
-          // toggleboxText.center(0.5*x, 0.5*y);
-          toggleboxText.move(30, y);
-          
-          toggleboxText.font({family: font_family});
+          toggleboxText.text(text);
+          toggleboxText.move(object.x() + 30, object.y()); 
         },
         stateChanged: function(eventHandler){
-          stateEvent = eventHandler 
+          stateEvent = eventHandler;
         },
         oncheck: function(eventHandler){
-          checkedEvent = eventHandler
+          checkedEvent = eventHandler;
         }, 
         setId: function(id){
           togglebox.attr('id', id);
@@ -147,8 +141,8 @@ var MyToolkit = (function() {
       }
     }
 
-    var CheckBox = function(){
-      var draw = SVG().addTo('body');
+    var CheckBox = function(draw){
+      // var draw = SVG().addTo('body');
       var checkbox = new ToggleBox('rectangle', draw);
       return {
         move: function(x, y) {
@@ -213,10 +207,10 @@ var MyToolkit = (function() {
       }
     }
 
-    var RadioDials = function(n){
+    var RadioDials = function(draw, n){
       // n - number of radio dials
 
-      var draw = SVG().addTo('body').size('400px', '250px');
+      // var draw = SVG().addTo('body').size('400px', '250px');
       var y = 0;
       var radioDialsList = []; 
 
@@ -284,8 +278,7 @@ var MyToolkit = (function() {
       }
     }
 
-    var ProgressBar = function(){
-      var draw = SVG().addTo('body').size(400, 50);
+    var ProgressBar = function(draw){
       var progressBar = draw.group();
       var barWidth = 100;
       var progressNumber = 0;
@@ -297,8 +290,7 @@ var MyToolkit = (function() {
       return {
         setWidth: function(width){
           barWidth = width
-          bar = progressBar.rect(width,15).fill({color: lighter}).stroke({color: 'black'});
-          bar.backward()
+          bar.width(width)
         },
         incrementProgress: function(){
           if (progressNumber < barWidth)
@@ -311,6 +303,9 @@ var MyToolkit = (function() {
         },
         getProgress: function(){
           return progressNumber;
+        },
+        move: function(x, y){
+          progressBar.move(x, y)
         }
       }
 
