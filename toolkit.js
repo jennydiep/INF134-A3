@@ -216,7 +216,7 @@ var MyToolkit = (function() {
     var RadioDials = function(n){
       // n - number of radio dials
 
-      var draw = SVG().addTo('body').size('1000px', '250px');
+      var draw = SVG().addTo('body').size('400px', '250px');
       var y = 0;
       var radioDialsList = []; 
 
@@ -284,22 +284,40 @@ var MyToolkit = (function() {
       }
     }
 
-    // object.click(function(event){
-    //   if(checkedEvent != null)
-    //     checkedEvent(event);
-    //   if (check){
-    //     check = false;
-    //     action(lighter, 150, object);
-    //     colors = checkedColors;
-    //   }
-    //   else{
-    //     check = true;
-    //     action(primary, 150, object);
-    //     colors = uncheckedColors;
-    //   }
-    // });
+    var ProgressBar = function(){
+      var draw = SVG().addTo('body').size(400, 50);
+      var progressBar = draw.group();
+      var barWidth = 100;
+      var progressNumber = 0;
+      var bar = null;
 
-return {Button, ToggleBox, CheckBox, RadioDials, RadioDial, TextBox}
+      var bar = progressBar.rect(barWidth,15).fill({color: lighter}).stroke({color: 'black'});
+      var progress = progressBar.rect(progressNumber,15).fill({color: primary}).stroke({color: 'black'});
+
+      return {
+        setWidth: function(width){
+          barWidth = width
+          bar = progressBar.rect(width,15).fill({color: lighter}).stroke({color: 'black'});
+          bar.backward()
+        },
+        incrementProgress: function(){
+          if (progressNumber < barWidth)
+            progressNumber += 1;
+          progress.width(progressNumber);
+        },
+        setProgress: function(number){
+          progressNumber =  barWidth * (number/100.0);
+          progress.width(progressNumber);
+        },
+        getProgress: function(){
+          return progressNumber;
+        }
+      }
+
+    }
+
+
+return {Button, ToggleBox, CheckBox, RadioDials, RadioDial, TextBox, ProgressBar}
 }());
 
 export{MyToolkit}
@@ -332,50 +350,3 @@ function buttonActions(object, parentObject, colors, transition){
     transition(defaultState);
   })
 }
-
-// var CheckBox = function(){
-//   var draw = SVG().addTo('body');
-//   var togglebox = new ToggleBox('rectangle', draw);
-//   var checkedEvent = null;
-//   var check = false;
-//   var colors = uncheckedColors;
-
-//   var checkbox, rect = togglebox.src();
-
-//   checkbox.src().click(function(event){
-//     console.log(check)
-//     if(checkedEvent != null)
-//       checkedEvent(event);
-//     if (check){
-//       check = false;
-//       action(lighter, 150, rect);
-//       colors = checkedColors;
-//     }
-//     else{
-//       check = true;
-//       action(primary, 150, rect);
-//       colors = uncheckedColors;
-//     }
-//   });
-//   return {
-//     move: function(x, y) {
-//       checkbox.move(x, y)
-//     },
-//     setText: function(text) {
-//       checkbox.setText(text)
-//     },
-//     stateChanged: function(eventHandler){
-//       checkbox.stateChanged(eventHandler);
-//     },
-//     oncheck: function(eventHandler){
-//       // checkbox.oncheck(eventHandler);
-//       checkedEvent = eventHandler
-//     }, 
-//     setId: function(id){
-//       checkbox.setId(id)
-//     },
-//     src: function(){
-//       checkbox.src();
-//     }
-//   }
-// }

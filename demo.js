@@ -22,21 +22,14 @@ checkbox1.stateChanged(function(e){
 checkbox1.oncheck(function(e){
 	console.log('checkbox clicked', e);
 });
-
 checkbox1.setId("1")
 
-// var togglebox = new MyToolkit.ToggleBox;
-// togglebox.setText('temp')
-// togglebox.move(10, 10)
 
 var radioDials = new MyToolkit.RadioDials(3);
 radioDials.setText(0, 'radio dial 1')
 radioDials.setText(1, 'radio dial 2')
 radioDials.setText(2, 'radio dial 3')
 radioDials.move(100, 100)
-// radioDials.stateChanged(function(e){
-// 	console.log(e, "radiodial");
-// });
 radioDials.oncheck(function(e, i){
 	console.log(e, 'position:', i);
 });
@@ -46,9 +39,22 @@ radioDials.stateChanged(function(e){
 })
 
 var textBox = new MyToolkit.TextBox;
+textBox.move(50,50)
 
-textBox.move(100,100)
 
+var progressBar = new MyToolkit.ProgressBar;
+progressBar.setWidth(300);
+console.log("progressbar value: ", progressBar.getProgress())
 
-// var checkbox2 = new MyToolkit.CheckBox;
-// checkbox2.move(100, 100)
+for(var i=0; i<=300; i++){
+    progressBar.incrementProgress();
+    await sleep(10);
+    if (i >= 300){
+        i = 0;
+        progressBar.setProgress(0)
+    }
+}
+
+function sleep (time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+  }
