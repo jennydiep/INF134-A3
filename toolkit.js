@@ -55,52 +55,56 @@ var MyToolkit = (function() {
         },
         onclick: function(eventHandler){
           clickEvent = eventHandler
+        },
+        setId: function(id){
+          checkbox.attr('id', id);
         }
       }
     }
 
-    var CheckBox = function(){
-      var draw = SVG().addTo('body');
-      var checkbox = draw.group();
-      var rect = checkbox.rect(20,20).fill(lighter);
+    var ToggleBox = function(shape, draw){
+      var togglebox = draw.group();
+      var object = null;
+      var colors = uncheckedColors;
+
+      if (shape === 'rectangle'){
+        object = togglebox.rect(20,20).fill(lighter);
+      }
+      else{
+        object = togglebox.circle(20).fill(lighter);
+      }
+
       var check = false;
       var state = 'idle'
       var stateEvent = null;
       var checkedEvent = null;
-      var colors = uncheckedColors;
+      var toggleboxText = togglebox.text('').fill({ color: 'black'});
 
-      // var checkboxColors = {'checked': checkedColors, 'unchecked': uncheckedColors};
+      object.css({cursor: 'pointer'});
 
-
-      var checkboxText = checkbox.text('').fill({ color: 'black'});
-      
-      // checkboxActions(rect, rect, checkboxColors, transition, checked);
-      // buttonActions(checkbox, rect, colors, transition);
-      // var buttonAction = new ButtonActions(checkbox, rect, colors, transition);
-
-      rect.mousedown(function(){
+      object.mousedown(function(){
         state = 'pressed';
         transition(state);
       });
-      rect.mouseout(function(){
+      object.mouseout(function(){
         state = 'idle';
         transition(state);
       });
-      rect.mouseup(function(){
+      object.mouseup(function(){
         state = 'up';
         transition(state);
       });
-      rect.click(function(event){
+      object.click(function(event){
         if(checkedEvent != null)
           checkedEvent(event);
         if (check){
           check = false;
-          action(lighter, 150, rect);
+          action(lighter, 150, object);
           colors = checkedColors;
         }
         else{
           check = true;
-          action(primary, 150, rect);
+          action(primary, 150, object);
           colors = uncheckedColors;
         }
       });
@@ -112,24 +116,116 @@ var MyToolkit = (function() {
 
       return {
         move: function(x, y) {
-          checkbox.move(x, y)
+          togglebox.move(x, y)
+          togglebox.attr('x', x);
+          togglebox.attr('y', y);
         },
         setText: function(text) {
-          checkboxText = checkbox.text(text).fill({ color: 'black'});
-          checkboxText.center(0.5*rect.width(), 0.5*rect.height());
-          checkboxText.move(30, 0);
-          checkboxText.font({family: font_family});
+          toggleboxText = togglebox.text(text).fill({ color: 'black'});
+          toggleboxText.center(0.5*togglebox.width(), 0.5*togglebox.height());
+          toggleboxText.move(30, 0);
+          toggleboxText.font({family: font_family});
         },
         stateChanged: function(eventHandler){
           stateEvent = eventHandler 
         },
         oncheck: function(eventHandler){
           checkedEvent = eventHandler
+        }, 
+        setId: function(id){
+          togglebox.attr('id', id);
+        },
+        src: function(){
+          return togglebox;
         }
       }
-
     }
-return {Button, CheckBox}
+
+    var CheckBox = function(){
+      var draw = SVG().addTo('body');
+      var checkbox = new ToggleBox('rectangle', draw);
+      return {
+        move: function(x, y) {
+          checkbox.move(x, y)
+        },
+        setText: function(text) {
+          checkbox.setText(text)
+        },
+        stateChanged: function(eventHandler){
+          checkbox.stateChanged(eventHandler);
+        },
+        oncheck: function(eventHandler){
+          checkbox.oncheck(eventHandler);
+        }, 
+        setId: function(id){
+          checkbox.setId(id)
+        }
+      }
+    }
+
+    var RadioDial = function(draw){
+      var radioDial = new ToggleBox('circle', draw);
+      return {
+        move: function(x, y) {
+          radioDial.move(x, y)
+        },
+        setText: function(text) {
+          radioDial.setText(text)
+        },
+        stateChanged: function(eventHandler){
+          radioDial.stateChanged(eventHandler);
+        },
+        oncheck: function(eventHandler){
+          radioDial.oncheck(eventHandler);
+        }, 
+        setId: function(id){
+          radioDial.setId(id)
+        },
+        src: function(){
+          return radioDial.src();
+        }
+      }
+    }
+
+    var RadioDials = function(n){
+      // n - number of radio dials
+
+      var draw = SVG().addTo('body').size('100%', '100%');
+      var y = 0;
+      var radioDialsList = []; // list of tuples => (dial, y)
+
+      for (var i=0; i<n; i++){
+        var radioDial = new RadioDial(draw);
+        radioDial.setId(String(i));
+        radioDial.move(0, y);
+        radioDialsList.push(radioDial);
+        y += 30
+      }
+      console.log(radioDialsList);
+      return {
+        move: function(x, y) {
+          for (var i=0; i<radioDialsList.length; i++){
+            var radioX = radioDialsList[i].src().attr('x')
+            var radioY = radioDialsList[i].src().attr('y');
+            radioDialsList[i].move(x + radioX, y + radioY);
+          }
+        },
+        setText: function(position, text) {
+          radioDialsList[position].setText(text);
+        },
+        // stateChanged: function(eventHandler){
+        //   checkbox.stateChanged(eventHandler);
+        // },
+        // oncheck: function(eventHandler){
+        //   checkbox.oncheck(eventHandler);
+        // }, 
+        // setId: function(id){
+        //   checkbox.setId(id)
+        // }
+      }
+    }
+
+return {Button, ToggleBox, CheckBox, RadioDials}
 }());
 
 export{MyToolkit}

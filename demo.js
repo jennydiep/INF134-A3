@@ -23,5 +23,15 @@ checkbox1.oncheck(function(e){
 	console.log(e);
 });
 
+checkbox1.setId("1")
+
+// var togglebox = new MyToolkit.ToggleBox;
+// togglebox.setText('temp')
+// togglebox.move(10, 10)
+
+var radioDials = new MyToolkit.RadioDials(4);
+radioDials.setText(0, 'testing this line')
+radioDials.move(100, 100)
+
 // var checkbox2 = new MyToolkit.CheckBox;
 // checkbox2.move(100, 100)
