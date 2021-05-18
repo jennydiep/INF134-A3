@@ -4,11 +4,13 @@ var primary = '#9370DB'
 var darker = '#7659b3'
 var darkest = '#5c458c'
 var lighter = '#E6E6FA'
-var lighter_dim = '#cecede'
+var lighter_dim = '#b9b9c7'
+var lighter_darkest = '#8f8fb0'
 
 var buttonColors = {'mouseover': darker, 'mouseout': primary, 'mousedown': darkest, 'mouseup': darker};
 var uncheckedColors = {'mouseover': lighter_dim, 'mouseout': lighter, 'mousedown': darker, 'mouseup': lighter_dim};
 var checkedColors = {'mouseover': darker, 'mouseout': primary, 'mousedown': lighter_dim, 'mouseup': lighter};
+var scrollbarColors = {'mouseover': lighter_dim, 'mouseout': lighter_dim, 'mousedown': lighter_darkest, 'mouseup': lighter_dim};
 
 var font_family = 'courier new';
 // var size = "25%";
@@ -260,8 +262,7 @@ var MyToolkit = (function() {
       }
     }
 
-    var TextBox = function(){
-      var draw = SVG().addTo('body');
+    var TextBox = function(draw){
       var textbox = draw.group();
       var rect = textbox.rect(200, 30).fill("white").stroke("black")
       var text = textbox.text("hello").move(2,4);
@@ -309,8 +310,69 @@ var MyToolkit = (function() {
 
     }
 
+    var ScrollBar = function(draw){
+      var scrollbar = draw.group();
+      var barHeight = 300;
+      var thumbPosition = 0;
+      var colors = scrollbarColors;
+      var defaultState = 'idle';
+      var stateEvent = null;
 
-return {Button, ToggleBox, CheckBox, RadioDials, RadioDial, TextBox, ProgressBar}
+      var bar = scrollbar.rect(17, barHeight).fill({color: lighter}).stroke({color: 'black'});
+      var thumb = scrollbar.rect(17, 50).fill({color: lighter_dim}).stroke({color: 'black'});
+
+      thumb.mouseup(function(){
+        action(colors.mouseup, 100, thumb);
+        defaultState = "up";
+        transition(defaultState)
+      })
+      thumb.mousemove(function(event){
+        if (defaultState == 'pressed'){
+          var direction = event.movementY;
+          // console.log(event)
+          if (direction > 0){
+            if (thumb.y()+1 <= scrollbar.y()+barHeight-thumb.height())
+              thumb.y(thumb.y()+1);
+          }
+          else{
+            if (thumb.y()-1 >= scrollbar.y())
+              thumb.y(thumb.y()-1);
+          }
+        }
+      });
+      // thumb.mouseover(function(){
+      //   action(colors.mouseover, 100, thumb);
+      //   defaultState = 'hover';
+      //   transition(defaultState);
+      // })
+      thumb.mouseout(function(){
+        action(colors.mouseout, 100, thumb);
+        defaultState = 'idle';
+        transition(defaultState);
+      })
+      thumb.mousedown(function(){
+        action(colors.mousedown, 100, thumb);
+        defaultState = 'pressed';
+        transition(defaultState);
+      })
+
+      function transition(defaultState){
+        if (stateEvent != null)
+          stateEvent(defaultState);
+      }
+
+      return {
+        move: function(x,y){
+          scrollbar.move(x, y);
+        },
+        stateChanged: function(eventHandler){
+          stateEvent = eventHandler;
+        }
+      }
+    }
+
+
+return {Button, ToggleBox, CheckBox, RadioDials, RadioDial, TextBox, ProgressBar, ScrollBar}
 }());
 
 export{MyToolkit}
@@ -342,4 +404,8 @@ function buttonActions(object, parentObject, colors, transition){
     defaultState = 'pressed';
     transition(defaultState);
   })
+}
+
+function sleep (time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
 }

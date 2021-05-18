@@ -3,6 +3,8 @@ import {MyToolkit} from './toolkit.js';
 // FOR ALL WIDGETS, MUST SPECIFY DRAW AS FIRST PARAMETER
 var draw = SVG().addTo('body').size('1000px', '1000px');
 
+// Note: This demo has a weird bug where widgets you create after creating a progress bar won't show up.. so save progress bars for last :)
+
 //  ----------------------------------------------------------------  BUTTON  ---------------------------------------------------------------- //
 // BUTTON METHODS:
 //
@@ -47,6 +49,7 @@ checkbox1.setId("1")
 //  --------------------------------------------------------------  RADIO DIALS  -------------------------------------------------------------- //
 // RADIO DIAL METHODS:
 //
+// constructor(draw, n)                         - n represents number of radio dials in group
 // move(x, y)                                   - moves radio dial group (starting from first radio dial) to location (x, y)
 // setText(pos, text)                           - sets radio dial's label of position 'pos' to 'text'
 // oncheck(eventHandler)                        - specifies function to be run when radio dial is checked, 
@@ -69,9 +72,16 @@ radioDials.stateChanged(function(e){
     console.log(e, ": radio button")
 })
 
+//  ---------------------------------------------------------------  SCROLL BAR  --------------------------------------------------------------- //
+var scrollBar = new MyToolkit.ScrollBar(draw);
+scrollBar.move(500, 100)
+scrollBar.stateChanged(function(e){
+	console.log(e, ": scrollbar");
+});
+
 //  ----------------------------------------------------------------  TEXTBOX  ---------------------------------------------------------------- //
-var textBox = new MyToolkit.TextBox;
-textBox.move(50,50)
+var textBox = new MyToolkit.TextBox(draw);
+textBox.move(50,375)
 
 //  --------------------------------------------------------------  PROGRESS BAR  -------------------------------------------------------------- //
 // PROGRESS BAR METHODS:
@@ -85,15 +95,15 @@ textBox.move(50,50)
 // TODO: eventhandler for when widget state changes
 
 var progressBar = new MyToolkit.ProgressBar(draw);
-progressBar.move(50, 50)
+progressBar.move(50, 325)
 progressBar.setWidth(300);
 console.log("progressbar value: ", progressBar.getProgress())
 
 
-for(var i=0; i<=300; i++){
-    progressBar.incrementProgress();
-    await sleep(10);
-    if (i >= 300){
+for(var i=0; i<=100; i++){
+    progressBar.setProgress(i);
+    await sleep(25);
+    if (i >= 100){
         i = 0;
         progressBar.setProgress(0)
     }
@@ -103,3 +113,6 @@ for(var i=0; i<=300; i++){
 function sleep (time) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
+
+
+
