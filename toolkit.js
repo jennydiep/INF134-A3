@@ -209,8 +209,6 @@ var MyToolkit = (function() {
 
     var RadioDials = function(draw, n){
       // n - number of radio dials
-
-      // var draw = SVG().addTo('body').size('400px', '250px');
       var y = 0;
       var radioDialsList = []; 
 
