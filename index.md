@@ -8,3 +8,5 @@ title:  Home
 [Documentation](out/index.html)
 
 [Demo](demo.html)
+
+[Github](https://github.com/jennydiep/INF134-A3)
