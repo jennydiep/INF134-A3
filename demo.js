@@ -43,7 +43,6 @@ checkbox1.stateChanged(function(e){
 checkbox1.oncheck(function(e){
 	console.log('checkbox clicked', e);
 });
-checkbox1.setId("1")
 
 //  --------------------------------------------------------------  RADIO DIALS  -------------------------------------------------------------- //
 // RADIO DIAL METHODS:
@@ -123,12 +122,20 @@ for(var i=0; i<=100; i++){
     })
 }
 
+progressBar1.stateChanged(function(state){
+    console.log(state, ": progress bar1");
+})
+
 
 
 // constant moving progress bar by using setProgress(x)
 var progressbar2 = new MyToolkit.ProgressBar(draw);
 progressbar2.move(50, 350)
 progressbar2.setWidth(300);
+
+progressbar2.stateChanged(function(state){
+    console.log(state, ": progress bar2");
+})
 
 for(var i=0; i<=100; i++){
     progressbar2.setProgress(i);
@@ -138,6 +145,7 @@ for(var i=0; i<=100; i++){
         progressbar2.setProgress(0)
     }
 }
+
 
 // sleep function - delay to animate progress bar
 function sleep (time) {

@@ -25,10 +25,6 @@ var MyToolkit = (function() {
    * @name Button
    * @class
    * @param  {Object} draw - svg draw object
-   * @property {function} setText(text)                   sets button's label to text
-   * @property {function} move(x, y)                      moves button to location (x,y)
-   * @property {function} onclick(eventHandler)           specifies function to be run when button is clicked, event is MouseEvent
-   * @property {function} stateChange(eventHandler)       specifies function to be run when button changes state, event is current state (hover, idle, pressed, up)
    */
     var Button = function(draw){
       var button = draw.group();
@@ -57,11 +53,6 @@ var MyToolkit = (function() {
         if (stateEvent != null)
           stateEvent(defaultState);
       }
-      
-      /**             
-       * @property {function} onclick(eventHandler)          - specifies function to be run when button is clicked, event is MouseEvent
-       * @property {function} stateChange(eventHandler)      - specifies function to be run when button changes state, event is current state (hover, idle, pressed, up)
-      **/
 
       return { 
         /**
@@ -198,15 +189,36 @@ var MyToolkit = (function() {
       // var draw = SVG().addTo('body');
       var checkbox = new ToggleBox('rectangle', draw);
       return {
+        /**
+         * moves checkbox to location (x,y)
+         * @memberof CheckBox
+         * @param  {Number} x
+         * @param  {Number} y
+         */
         move: function(x, y) {
           checkbox.move(x, y)
         },
+        /**
+         * sets checkbox's label to text
+         * @memberof CheckBox
+         * @param  {String} text
+         */
         setText: function(text) {
           checkbox.setText(text)
         },
+        /**
+         * specifies function to be run when checkbox changes state, event is current state (hover, idle, pressed, up)
+         * @memberof CheckBox
+         * @param  {function} eventHandler
+         */
         stateChanged: function(eventHandler){
           checkbox.stateChanged(eventHandler);
         },
+        /**
+         * specifies function to be run when checkbox is checked, event is MouseEvent
+         * @memberof CheckBox
+         * @param  {function} eventHandler
+         */
         oncheck: function(eventHandler){
           checkbox.oncheck(eventHandler);
         }, 
@@ -245,7 +257,6 @@ var MyToolkit = (function() {
           radioDial.stateChanged(eventHandler);
         },
         oncheck: function(eventHandler){
-          // radioDial.oncheck(eventHandler);
           checkEvent = eventHandler;
         }, 
         setId: function(id){
@@ -296,21 +307,38 @@ var MyToolkit = (function() {
       });
 
       return {
+        /**
+         * @memberof RadioDials
+         * @param  {Number} x
+         * @param  {Number} y
+         */
         move: function(x, y) {
           for (var i=0; i<radioDialsList.length; i++){
             var radioY = radioDialsList[i].src().y();
-            // var radioX = radioDialsList[i].src().x();
             radioDialsList[i].move(x, y+ radioY);
           }
         },
+        /**
+         * @memberof RadioDials
+         * @param  {Number} position
+         * @param  {String} text
+         */
         setText: function(position, text) {
           radioDialsList[position].setText(text);
         },
+        /**
+         * @memberof RadioDials
+         * @param  {function} eventHandler
+         */
         stateChanged: function(eventHandler){
           for (var i=0; i<radioDialsList.length; i++){
             radioDialsList[i].stateChanged(eventHandler);
           }
         },
+        /**
+         * @memberof RadioDials
+         * @param  {function} eventHandler
+         */
         oncheck: function(eventHandler){
           for (var i=0; i<radioDialsList.length; i++){
             radioDialsList[i].oncheck(eventHandler);
@@ -425,9 +453,19 @@ var MyToolkit = (function() {
       var progressNumber = 0;
       var bar = null;
       var progressChangedEvent  = null;
+      var stateEvent = null;
 
       var bar = progressBar.rect(barWidth,15).fill({color: lighter}).stroke({color: 'black'});
       var progress = progressBar.rect(progressNumber,15).fill({color: primary}).stroke({color: 'black'});
+
+      progressBar.mouseout(function(){
+        if (stateEvent != null)
+          stateEvent("hover")
+      });
+      progressBar.mouseover(function(){
+        if (stateEvent != null)
+          stateEvent("idle")
+      });
 
       return {
         setWidth: function(width){
@@ -454,7 +492,7 @@ var MyToolkit = (function() {
           progressBar.move(x, y)
         },
         stateChanged: function(eventHandler){
-
+          stateEvent = eventHandler;
         },
         progressIncremented: function(eventHandler){
           progressChangedEvent = eventHandler;
