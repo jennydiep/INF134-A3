@@ -16,6 +16,8 @@ var font_family = 'courier new';
 // var size = "25%";
 
 /**
+ * To create a widget: 
+ *    ex: var button = new MyToolKit.Button(draw)
  * @param  {function} 
  */
 var MyToolkit = (function() {
@@ -665,19 +667,45 @@ var MyToolkit = (function() {
         }
       }
       return {
+        /**
+         * moves scrollbar to location (x, y)
+         * @memberof ScrollBar
+         * @param  {Number} x
+         * @param  {Number} y
+         */
         move: function(x,y){
           scrollbar.move(x, y);
         },
+        /**
+         * specifies function to be run when scrollbar state changes
+         * @memberof ScrollBar
+         * @param  {function} eventHandler
+         */
         stateChanged: function(eventHandler){
           stateEvent = eventHandler;
         },
+        /**
+         * sets height of scrollbar
+         * @memberof ScrollBar
+         * @param  {Number} height
+         */
         setHeight: function(height){
           barHeight = height;
           bar.height(height);
         },
+        /**
+         * returns position of thumb in a list, list[0] = x, list[1] = y
+         * @memberof ScrollBar
+         * @returns {list} 
+         */
         getThumbPosition: function(){
           return [thumb.x(), thumb.y()];
         },
+        /**
+         * specifies function to be run when scrollbar is moved (up or down)
+         * @memberof ScrollBar
+         * @param  {function} eventHandler
+         */
         barMoved: function(eventHandler){
           barMovedEvent = eventHandler;
         }
@@ -776,11 +804,14 @@ var MyToolkit = (function() {
         }
       }
       return {
+        /**
+         * moves slider to location (x, y)
+         * @memberof Slider
+         * @param  {Number} x
+         * @param  {Number} y
+         */
         move: function(x,y){
           slider.move(x, y);
-        },
-        getThumbPosition: function(){
-          return [thumb.x(), thumb.y()];
         },
       }
     }
