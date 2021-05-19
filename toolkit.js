@@ -785,13 +785,19 @@ var MyToolkit = (function() {
         defaultState = 'hover-thumb';
         transition(defaultState);
       })
+      // thumb.mouseout(function(){
+      //   defaultState = 'idle';
+      //   transition(defaultState);
+      // })
 
       // bar states
       bar.mouseover(function(){
-        transition('hover-bar');
+        defaultState = 'hover-bar';
+        transition(defaultState);
       });
       bar.mouseout(function(){
-        transition('idle');
+        defaultState = 'idle';
+        transition(defaultState );
       })
 
       function transition(defaultState){
@@ -813,6 +819,21 @@ var MyToolkit = (function() {
         move: function(x,y){
           slider.move(x, y);
         },
+        /**
+         * specifies function to be run when slider changes state
+         * @memberof Slider
+         * @param  {function} eventHandler
+         */
+        stateChanged: function(eventHandler){
+          stateEvent = eventHandler;
+        },
+        /**
+         * @memberof Slider
+         * @returns {number} percent the slider is at
+         */
+        getPercent: function(){
+          return percentNumber;
+        }
       }
     }
 

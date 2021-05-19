@@ -97,6 +97,10 @@ textBox.textChanged(function(e){
 var slider = new MyToolkit.Slider(draw);
 slider.move(50, 550)
 
+slider.stateChanged(function(state){
+    console.log(state, ":slider")
+})
+
 //  --------------------------------------------------------------  PROGRESS BAR  -------------------------------------------------------------- //
 // PROGRESS BAR METHODS:
 //
