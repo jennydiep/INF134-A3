@@ -84,7 +84,7 @@ scrollBar.barMoved(function(direction){
 
 //  ----------------------------------------------------------------  TEXTBOX  ---------------------------------------------------------------- //
 var textBox = new MyToolkit.TextBox(draw);
-textBox.move(50,375)
+textBox.move(50,400)
 
 textBox.stateChanged(function(e){
     console.log(e, ": textbox")

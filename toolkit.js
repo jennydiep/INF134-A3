@@ -370,6 +370,7 @@ var MyToolkit = (function() {
       var textInput = "";
       var textChangeEvent = null;
       var rect = textbox.rect(200, 30).fill('white').stroke("black")
+      var focused = false;
       
       var text = textbox.text(textInput);
       text.font({family: font_family});
@@ -380,7 +381,7 @@ var MyToolkit = (function() {
 
       caret.back();
       document.addEventListener("keydown", function(event) {
-          if (defaultState == 'hover'){
+          if (focused){
             if (event.key == 'Backspace'){  
               if ((textInput.length > 0)){
                 textInput = textInput.slice(0, -1);
@@ -409,6 +410,20 @@ var MyToolkit = (function() {
             }
           }
       });
+
+      draw.mousedown(function(e){
+
+        var minX = textbox.x();
+        var maxX = textbox.x() + textbox.width();
+
+        var minY = textbox.y();
+        var maxY = textbox.y() + textbox.height();
+
+        if ((minX < e.offsetX)&&(e.offsetX < maxX)&&(minY < e.offsetY)&&(e.offsetY < maxY)) // down was in range of text box
+          focused = true;
+        else
+          focused = false;
+      })
       
       textbox.mouseover(function(e){
         caret.front();
@@ -421,6 +436,15 @@ var MyToolkit = (function() {
         defaultState = 'idle';
         transition(defaultState);
       });
+      textbox.mousedown(function(){
+        focused = true;
+        defaultState = 'pressed';
+        transition(defaultState);
+      });
+      textbox.mouseup(function(){
+        defaultState = 'up';
+        transition(defaultState);
+      })
 
       function transition(defaultState){
         if (stateEvent != null)
