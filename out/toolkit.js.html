@@ -285,7 +285,6 @@ var MyToolkit = (function() {
           radioDial.stateChanged(eventHandler);
         },
         oncheck: function(eventHandler){
-          // radioDial.oncheck(eventHandler);
           checkEvent = eventHandler;
         }, 
         setId: function(id){
@@ -336,21 +335,46 @@ var MyToolkit = (function() {
       });
 
       return {
+        /**
+         * moves radiodial group to location (x,y)
+         * @memberof RadioDials
+         * @param  {Number} x
+         * @param  {Number} y
+         */
         move: function(x, y) {
           for (var i=0; i&lt;radioDialsList.length; i++){
             var radioY = radioDialsList[i].src().y();
-            // var radioX = radioDialsList[i].src().x();
             radioDialsList[i].move(x, y+ radioY);
           }
         },
+        /**
+         * @memberof RadioDials
+         * @param  {Number} position
+         * @param  {String} text
+         */
         setText: function(position, text) {
           radioDialsList[position].setText(text);
         },
+        /**
+         * specifies function to be run when radio dials changes state, event is current state (hover, idle, pressed, up)
+         * @memberof RadioDials
+         * @param  {function} eventHandler
+         */
         stateChanged: function(eventHandler){
           for (var i=0; i&lt;radioDialsList.length; i++){
             radioDialsList[i].stateChanged(eventHandler);
           }
         },
+        /**
+         * specifies function to be run when radio is checked, event is MouseEvent also specifies which position radio dial was checked
+         * @example
+         * eventHandler(event, i){
+         *   event - current state or MouseEvent   
+         *   i - radio dial position that was checked
+         * }
+         * @memberof RadioDials
+         * @param  {function} eventHandler
+         */
         oncheck: function(eventHandler){
           for (var i=0; i&lt;radioDialsList.length; i++){
             radioDialsList[i].oncheck(eventHandler);
@@ -436,18 +460,39 @@ var MyToolkit = (function() {
       }
       
       return {
+          /**
+           * moves textbox to location (x,y)
+           * @memberof TextBox
+           * @param  {Number} x
+           * @param  {Number} y
+           */
           move: function(x, y) {
               textbox.move(x, y);
           },
           src: function(){
               return textbox;
           },
+          /**
+           * specifies function to be run when textbox changes state, event is current state (hover, idle)
+           * @memberof TextBox
+           * @param  {function} eventHandler
+           */
           stateChanged: function(eventHandler){
             stateEvent = eventHandler;
           },
+          /**
+           * specifies function to be run when text in the textbox changes (due to user input)
+           * @memberof TextBox
+           * @param  {function} eventHandler
+           */
           textChanged: function(eventHandler){
             textChangeEvent = eventHandler;
           },
+          /**
+           * returns text from textbox that the user inputted
+           * @memberof TextBox
+           * @returns {String}  
+           */
           getText: function(){
             return textInput;
           }
@@ -465,15 +510,34 @@ var MyToolkit = (function() {
       var progressNumber = 0;
       var bar = null;
       var progressChangedEvent  = null;
+      var stateEvent = null;
 
       var bar = progressBar.rect(barWidth,15).fill({color: lighter}).stroke({color: 'black'});
       var progress = progressBar.rect(progressNumber,15).fill({color: primary}).stroke({color: 'black'});
 
+      progressBar.mouseout(function(){
+        if (stateEvent != null)
+          stateEvent("hover")
+      });
+      progressBar.mouseover(function(){
+        if (stateEvent != null)
+          stateEvent("idle")
+      });
+
       return {
+        /**
+         * set's the width of the bar of the progress bar
+         * @memberof ProgressBar
+         * @param  {Number} width
+         */
         setWidth: function(width){
           barWidth = width
           bar.width(width)
         },
+        /**
+         * increments progress bar's value by 1
+         * @memberof ProgressBar
+         */
         incrementProgress: function(){
           if (progressNumber &lt; barWidth)
             progressNumber += 1;
@@ -483,19 +547,44 @@ var MyToolkit = (function() {
             progressChangedEvent(progressNumber);
           }
         },
+        /**
+         * sets progress bar's value to 'number'
+         * @memberof ProgressBar
+         * @param  {Number} number
+         */
         setProgress: function(number){
           progressNumber =  barWidth * (number/100.0);
           progress.width(progressNumber);
         },
+        /**
+         * gets current progress bar's value
+         * @memberof ProgressBar
+         */
         getProgress: function(){
           return (progressNumber/barWidth)*100;
         },
+        /**
+         * moves progress bar to location (x, y)
+         * @memberof ProgressBar
+         * @param  {Number} x
+         * @param  {Number} y
+         */
         move: function(x, y){
           progressBar.move(x, y)
         },
+        /**
+         * specifies function to be run when progress bar's state changes
+         * @memberof ProgressBar
+         * @param  {function} eventHandler
+         */
         stateChanged: function(eventHandler){
-
+          stateEvent = eventHandler;
         },
+        /**
+         * specifies function to be run when progressbar is incremented
+         * @memberof ProgressBar
+         * @param  {function} eventHandler
+         */
         progressIncremented: function(eventHandler){
           progressChangedEvent = eventHandler;
         }
@@ -504,6 +593,8 @@ var MyToolkit = (function() {
     }
 
     /**
+     * @name ScrollBar
+     * @class
      * @param  {Object} draw - svg draw object
      */
     var ScrollBar = function(draw){
@@ -769,13 +860,13 @@ function buttonActions(object, parentObject, colors, transition){
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Button.html">Button</a></li><li><a href="CheckBox.html">CheckBox</a></li><li><a href="ProgressBar.html">ProgressBar</a></li><li><a href="RadioDials.html">RadioDials</a></li><li><a href="Slider.html">Slider</a></li><li><a href="TextBox.html">TextBox</a></li></ul><h3>Global</h3><ul><li><a href="global.html#MyToolkit">MyToolkit</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Button.html">Button</a></li><li><a href="CheckBox.html">CheckBox</a></li><li><a href="ProgressBar.html">ProgressBar</a></li><li><a href="RadioDials.html">RadioDials</a></li><li><a href="ScrollBar.html">ScrollBar</a></li><li><a href="Slider.html">Slider</a></li><li><a href="TextBox.html">TextBox</a></li></ul><h3>Global</h3><ul><li><a href="global.html#MyToolkit">MyToolkit</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Wed May 19 2021 00:11:12 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Wed May 19 2021 01:08:32 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

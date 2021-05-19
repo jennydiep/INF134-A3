@@ -105,8 +105,8 @@ slider.move(50, 550)
 // getProgress()                                    - gets current progress bar's value
 // incrementProgress()                              - increments progress bar's value by 1
 // setProgress(number)                              - sets progress bar's value to 'number'
-// TODO: eventhandler for incremented progress bar
-// TODO: eventhandler for when widget state changes
+// eventhandler for incremented progress bar
+// eventhandler for when widget state changes
 
 
 // moving progress bar by using incrementProgress()

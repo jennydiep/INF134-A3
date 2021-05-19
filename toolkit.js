@@ -308,6 +308,7 @@ var MyToolkit = (function() {
 
       return {
         /**
+         * moves radiodial group to location (x,y)
          * @memberof RadioDials
          * @param  {Number} x
          * @param  {Number} y
@@ -327,6 +328,7 @@ var MyToolkit = (function() {
           radioDialsList[position].setText(text);
         },
         /**
+         * specifies function to be run when radio dials changes state, event is current state (hover, idle, pressed, up)
          * @memberof RadioDials
          * @param  {function} eventHandler
          */
@@ -336,6 +338,12 @@ var MyToolkit = (function() {
           }
         },
         /**
+         * specifies function to be run when radio is checked, event is MouseEvent also specifies which position radio dial was checked
+         * @example
+         * eventHandler(event, i){
+         *   event - current state or MouseEvent   
+         *   i - radio dial position that was checked
+         * }
          * @memberof RadioDials
          * @param  {function} eventHandler
          */
@@ -371,9 +379,8 @@ var MyToolkit = (function() {
       caret.back();
       document.addEventListener("keydown", function(event) {
           if (defaultState == 'hover'){
-            
             if (event.key == 'Backspace'){  
-              if (textInput.length > 0){
+              if ((textInput.length > 0)){
                 textInput = textInput.slice(0, -1);
                 text.text(textInput)
                 textchange(event.key)
@@ -383,9 +390,11 @@ var MyToolkit = (function() {
 
             }
             else{
-              textInput = textInput + event.key;
-              text.text(textInput)
-              textchange(event.key)
+              if (text.length()<(rect.width() - 10)){
+                textInput = textInput + event.key;
+                text.text(textInput)
+                textchange(event.key)
+              }
             }
             
             var x = text.x() + text.length() + 2;
@@ -396,7 +405,6 @@ var MyToolkit = (function() {
             else{
               caret.show()
             }
-            
           }
       });
       
@@ -424,18 +432,39 @@ var MyToolkit = (function() {
       }
       
       return {
+          /**
+           * moves textbox to location (x,y)
+           * @memberof TextBox
+           * @param  {Number} x
+           * @param  {Number} y
+           */
           move: function(x, y) {
               textbox.move(x, y);
           },
           src: function(){
               return textbox;
           },
+          /**
+           * specifies function to be run when textbox changes state, event is current state (hover, idle)
+           * @memberof TextBox
+           * @param  {function} eventHandler
+           */
           stateChanged: function(eventHandler){
             stateEvent = eventHandler;
           },
+          /**
+           * specifies function to be run when text in the textbox changes (due to user input)
+           * @memberof TextBox
+           * @param  {function} eventHandler
+           */
           textChanged: function(eventHandler){
             textChangeEvent = eventHandler;
           },
+          /**
+           * returns text from textbox that the user inputted
+           * @memberof TextBox
+           * @returns {String}  
+           */
           getText: function(){
             return textInput;
           }
@@ -468,10 +497,19 @@ var MyToolkit = (function() {
       });
 
       return {
+        /**
+         * set's the width of the bar of the progress bar
+         * @memberof ProgressBar
+         * @param  {Number} width
+         */
         setWidth: function(width){
           barWidth = width
           bar.width(width)
         },
+        /**
+         * increments progress bar's value by 1
+         * @memberof ProgressBar
+         */
         incrementProgress: function(){
           if (progressNumber < barWidth)
             progressNumber += 1;
@@ -481,19 +519,44 @@ var MyToolkit = (function() {
             progressChangedEvent(progressNumber);
           }
         },
+        /**
+         * sets progress bar's value to 'number'
+         * @memberof ProgressBar
+         * @param  {Number} number
+         */
         setProgress: function(number){
           progressNumber =  barWidth * (number/100.0);
           progress.width(progressNumber);
         },
+        /**
+         * gets current progress bar's value
+         * @memberof ProgressBar
+         */
         getProgress: function(){
           return (progressNumber/barWidth)*100;
         },
+        /**
+         * moves progress bar to location (x, y)
+         * @memberof ProgressBar
+         * @param  {Number} x
+         * @param  {Number} y
+         */
         move: function(x, y){
           progressBar.move(x, y)
         },
+        /**
+         * specifies function to be run when progress bar's state changes
+         * @memberof ProgressBar
+         * @param  {function} eventHandler
+         */
         stateChanged: function(eventHandler){
           stateEvent = eventHandler;
         },
+        /**
+         * specifies function to be run when progressbar is incremented
+         * @memberof ProgressBar
+         * @param  {function} eventHandler
+         */
         progressIncremented: function(eventHandler){
           progressChangedEvent = eventHandler;
         }
@@ -502,6 +565,8 @@ var MyToolkit = (function() {
     }
 
     /**
+     * @name ScrollBar
+     * @class
      * @param  {Object} draw - svg draw object
      */
     var ScrollBar = function(draw){
