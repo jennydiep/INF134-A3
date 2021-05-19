@@ -141,12 +141,13 @@ progressbar2.stateChanged(function(state){
     console.log(state, ": progress bar2");
 })
 
-for(var i=0; i<=100; i++){
+for(var i=0; i<=100; i+=10){
     progressbar2.setProgress(i);
-    await sleep(25);
+    await sleep(175);
     if (i >= 100){
         i = 0;
         progressbar2.setProgress(0)
+        await sleep(175);
     }
 }
 

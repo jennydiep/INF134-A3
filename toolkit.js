@@ -638,23 +638,31 @@ var MyToolkit = (function() {
       // thumb states
       thumb.mouseover(function(){
         // action(colors.mouseover, 100, thumb);
-        defaultState = 'hover-thumb';
-        transition(defaultState);
-      })
+        if (defaultState != 'pressed-thumb'){
+          defaultState = 'hover-thumb';
+          transition(defaultState);
+        }
+      });
       thumb.mouseout(function(){
         if (defaultState != 'pressed-thumb'){
           defaultState = 'idle';
           action(colors.mouseout, 10, thumb);
           transition(defaultState);
         }
-      })
+      });
 
       // bar states
       bar.mouseover(function(){
-        transition('hover-bar');
+        if (defaultState != 'pressed-thumb'){
+          defaultState = 'hover-bar';
+          transition(defaultState);
+        }
       });
       bar.mouseout(function(){
-        transition('idle');
+        if (defaultState != 'pressed-thumb'){
+          defaultState = 'idle';
+          transition(defaultState );
+        }
       })
 
       function transition(defaultState){
@@ -726,7 +734,7 @@ var MyToolkit = (function() {
       var percentNumber = 0;
 
       var bar = slider.rect(sliderWidth, 4).fill({color: lighter}).stroke({color: 'black'});
-      var thumb = slider.rect(5, 17).fill({color: lighter_dim}).stroke({color: 'black'});
+      var thumb = slider.circle(15).fill({color: lighter_dim}).stroke({color: 'black'});
       thumb.move(0, thumb.y() - 5);
 
       var percent = slider.text(String(percentNumber)).fill({ color: 'black'});
@@ -751,7 +759,7 @@ var MyToolkit = (function() {
             if (thumb.x()+1 <= slider.x()+slider.width()-thumb.width()){
               thumb.x(thumb.x()+1)
               barState('right');
-              percent.text(String(Math.ceil((++percentNumber/sliderWidth*100)+1)))
+              percent.text(String(Math.ceil((++percentNumber/sliderWidth*100)+5)))
             }
           }
           else{
@@ -782,22 +790,31 @@ var MyToolkit = (function() {
 
       // thumb states
       thumb.mouseover(function(){
-        defaultState = 'hover-thumb';
-        transition(defaultState);
-      })
-      // thumb.mouseout(function(){
-      //   defaultState = 'idle';
-      //   transition(defaultState);
-      // })
+        // action(colors.mouseover, 100, thumb);
+        if (defaultState != 'pressed-thumb'){
+          defaultState = 'hover-thumb';
+          transition(defaultState);
+        }
+      });
+      thumb.mouseout(function(){
+        if (defaultState != 'pressed-thumb'){
+          defaultState = 'idle';
+          transition(defaultState);
+        }
+      });
 
       // bar states
       bar.mouseover(function(){
-        defaultState = 'hover-bar';
-        transition(defaultState);
+        if (defaultState != 'pressed-thumb'){
+          defaultState = 'hover-bar';
+          transition(defaultState);
+        }
       });
       bar.mouseout(function(){
-        defaultState = 'idle';
-        transition(defaultState );
+        if (defaultState != 'pressed-thumb'){
+          defaultState = 'idle';
+          transition(defaultState );
+        }
       })
 
       function transition(defaultState){
