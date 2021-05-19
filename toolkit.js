@@ -273,7 +273,7 @@ var MyToolkit = (function() {
       var textbox = draw.group();
       var textInput = "";
       var textChangeEvent = null;
-      var rect = textbox.rect(200, 30).fill(lighter).stroke("black")
+      var rect = textbox.rect(200, 30).fill('white').stroke("black")
       
       var text = textbox.text(textInput);
       text.font({family: font_family});
@@ -366,9 +366,10 @@ var MyToolkit = (function() {
 
     var ProgressBar = function(draw){
       var progressBar = draw.group();
-      var barWidth = 100;
+      var barWidth = 100.0;
       var progressNumber = 0;
       var bar = null;
+      var progressChangedEvent  = null;
 
       var bar = progressBar.rect(barWidth,15).fill({color: lighter}).stroke({color: 'black'});
       var progress = progressBar.rect(progressNumber,15).fill({color: primary}).stroke({color: 'black'});
@@ -383,23 +384,26 @@ var MyToolkit = (function() {
             progressNumber += 1;
           progress.width(progressNumber);
 
+          if (progressChangedEvent != null){
+            progressChangedEvent(progressNumber);
+          }
         },
         setProgress: function(number){
           progressNumber =  barWidth * (number/100.0);
           progress.width(progressNumber);
         },
         getProgress: function(){
-          return progressNumber;
+          return (progressNumber/barWidth)*100;
         },
         move: function(x, y){
           progressBar.move(x, y)
         },
-        // stateChanged: function(eventHandler){
+        stateChanged: function(eventHandler){
 
-        // },
-        // progressIncremented: function(eventHandler){
-        //   progressChangedEvent = eventHandler;
-        // }
+        },
+        progressIncremented: function(eventHandler){
+          progressChangedEvent = eventHandler;
+        }
       }
 
     }

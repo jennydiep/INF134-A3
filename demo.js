@@ -3,8 +3,6 @@ import {MyToolkit} from './toolkit.js';
 // FOR ALL WIDGETS, MUST SPECIFY DRAW AS FIRST PARAMETER
 var draw = SVG().addTo('body').size('1000px', '1000px');
 
-// Note: This demo has a weird bug where widgets you create after creating a progress bar won't show up.. so save progress bars for last :)
-
 //  ----------------------------------------------------------------  BUTTON  ---------------------------------------------------------------- //
 // BUTTON METHODS:
 //
@@ -110,17 +108,33 @@ slider.move(50, 550)
 // TODO: eventhandler for incremented progress bar
 // TODO: eventhandler for when widget state changes
 
-var progressBar = new MyToolkit.ProgressBar(draw);
-progressBar.move(50, 325)
-progressBar.setWidth(300);
-console.log("progressbar value: ", progressBar.getProgress())
+
+// moving progress bar by using incrementProgress()
+var progressBar1 = new MyToolkit.ProgressBar(draw);
+progressBar1.move(50, 325)
+progressBar1.setWidth(300);
 
 for(var i=0; i<=100; i++){
-    progressBar.setProgress(i);
+    progressBar1.incrementProgress();
+    await sleep(25);
+    progressBar1.progressIncremented(function(){
+        console.log("progress has been incremented, progress: ", progressBar1.getProgress());       // shows getProgress() function
+    })
+}
+
+
+
+// constant moving progress bar by using setProgress(x)
+var progressbar2 = new MyToolkit.ProgressBar(draw);
+progressbar2.move(50, 350)
+progressbar2.setWidth(300);
+
+for(var i=0; i<=100; i++){
+    progressbar2.setProgress(i);
     await sleep(25);
     if (i >= 100){
         i = 0;
-        progressBar.setProgress(0)
+        progressbar2.setProgress(0)
     }
 }
 
