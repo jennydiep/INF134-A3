@@ -4,3 +4,14 @@ title:  Home
 ---
 
 ## A3: Custom Graphical Toolkit
+
+<head>
+    <title>SVG.js</title>
+    <meta charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/3.0.16/svg.min.js" ...></script>
+    <script src="toolkit.js" type="module"></script>
+    <script src="demo.js" type="module"></script>
+    <script src='style.css'></script>
+</head>
+
+[Documentation](docs.html)
