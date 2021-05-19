@@ -3,7 +3,7 @@ import {SVG} from './svg.min.js';
 var primary = '#9370DB'
 var darker = '#7659b3'
 var darkest = '#5c458c'
-var lighter = '#E6E6FA'
+var lighter = '#f2f2ff'
 var lighter_dim = '#b9b9c7'
 var lighter_darkest = '#8f8fb0'
 
@@ -25,12 +25,13 @@ var MyToolkit = (function() {
 
       var rect = button.rect(100,50).fill({color: primary}).stroke({color: 'black'});
       button.css({cursor: 'pointer'});
-
+     
       var buttonText = button.text('').fill({ color: lighter});
       buttonText.css({'pointer-events': 'none'});
       buttonText.x(rect.width()*0.20)
       buttonText.y(rect.height()*0.17)
       buttonText.font({family: font_family});
+      buttonText.css({'user-select': 'none'});
 
       buttonActions(button, rect, buttonColors, transition);
       button.click(function(event){
@@ -81,12 +82,18 @@ var MyToolkit = (function() {
       var checkedEvent = null;
       var toggleboxText = togglebox.text('').fill({ color: 'black'});
       toggleboxText.font({family: font_family});
+      toggleboxText.css({'pointer-events': 'none'});
+      toggleboxText.css({'user-select': 'none'});
       
 
       object.css({cursor: 'pointer'});
 
       object.mousedown(function(){
         state = 'pressed';
+        transition(state);
+      });
+      object.mouseover(function(){
+        state = 'hover';
         transition(state);
       });
       object.mouseout(function(){
@@ -264,15 +271,95 @@ var MyToolkit = (function() {
 
     var TextBox = function(draw){
       var textbox = draw.group();
-      var rect = textbox.rect(200, 30).fill("white").stroke("black")
-      var text = textbox.text("hello").move(2,4);
-      var caret = textbox.line(45, 2.5, 45, 25).stroke({ width: 1, color: "black" })
+      var textInput = "";
+      var textChangeEvent = null;
+      var rect = textbox.rect(200, 30).fill(lighter).stroke("black")
+      
+      var text = textbox.text(textInput);
+      text.font({family: font_family});
+      text.x(text.x()+ 3)
+      var defaultState = 'idle';
+      var stateEvent = null;
+      
+      
+      var caret = textbox.line(3, 2.5, 3, 25).stroke({ width: 1, color: 'black' })
+      // if (x < rect.width()){
+      //   caret = textbox.line(x, 2.5, x, 25).stroke({ width: 1, color: "black" })
+      // }
+      // else{
+      //   caret = textbox.line(rect.width(), 2.5, rect.width(), 25).stroke({ width: 1, color: "black" })
+      // }
+
+      caret.back();
+      document.addEventListener("keydown", function(event) {
+          if (defaultState == 'hover'){
+            
+            if (event.key == 'Backspace'){  
+              if (textInput.length > 0){
+                textInput = textInput.slice(0, -1);
+                text.text(textInput)
+                textchange(event.key)
+              }          
+            }
+            else if (event.key == 'Shift'){
+
+            }
+            else{
+              textInput = textInput + event.key;
+              text.text(textInput)
+              textchange(event.key)
+            }
+            
+            var x = text.x() + text.length() + 2;
+            caret.move(x, textbox.y() + 2.5)
+            if (x <= textbox.x()){
+              caret.x(rect.x()+ 3)
+            }
+            else{
+              caret.show()
+            }
+            
+          }
+      });
+      
+      textbox.mouseover(function(e){
+        caret.front();
+        defaultState = 'hover';
+        transition(defaultState);
+
+      });
+      textbox.mouseout(function(){
+        caret.back();
+        defaultState = 'idle';
+        transition(defaultState);
+      });
+
+      function transition(defaultState){
+        if (stateEvent != null)
+          stateEvent(defaultState);
+      }
+
+      function textchange(keypress){
+        if (textChangeEvent != null){
+          textChangeEvent(keypress);
+        }
+      }
+      
       return {
           move: function(x, y) {
               textbox.move(x, y);
           },
           src: function(){
               return textbox;
+          },
+          stateChanged: function(eventHandler){
+            stateEvent = eventHandler;
+          },
+          textChanged: function(eventHandler){
+            textChangeEvent = eventHandler;
+          },
+          getText: function(){
+            return textInput;
           }
       }
     }
@@ -295,6 +382,7 @@ var MyToolkit = (function() {
           if (progressNumber < barWidth)
             progressNumber += 1;
           progress.width(progressNumber);
+
         },
         setProgress: function(number){
           progressNumber =  barWidth * (number/100.0);
@@ -305,7 +393,13 @@ var MyToolkit = (function() {
         },
         move: function(x, y){
           progressBar.move(x, y)
-        }
+        },
+        // stateChanged: function(eventHandler){
+
+        // },
+        // progressIncremented: function(eventHandler){
+        //   progressChangedEvent = eventHandler;
+        // }
       }
 
     }
@@ -313,66 +407,247 @@ var MyToolkit = (function() {
     var ScrollBar = function(draw){
       var scrollbar = draw.group();
       var barHeight = 300;
-      var thumbPosition = 0;
       var colors = scrollbarColors;
       var defaultState = 'idle';
       var stateEvent = null;
+      var barMovedEvent = null;
 
       var bar = scrollbar.rect(17, barHeight).fill({color: lighter}).stroke({color: 'black'});
       var thumb = scrollbar.rect(17, 50).fill({color: lighter_dim}).stroke({color: 'black'});
 
-      thumb.mouseup(function(){
-        action(colors.mouseup, 100, thumb);
-        defaultState = "up";
-        transition(defaultState)
-      })
-      thumb.mousemove(function(event){
-        if (defaultState == 'pressed'){
+      // states tracked in window
+      draw.mouseup(function(){
+        if (defaultState == 'pressed-thumb'){
+          action(colors.mouseup, 10, thumb);
+          defaultState = "up";
+          transition(defaultState)
+        }
+        // else{
+        //   action(colors.mouseup, 10, thumb);
+        //   transition('up')
+        // }
+      });
+      draw.mousemove(function(event){
+
+        if (defaultState == 'pressed-thumb'){
           var direction = event.movementY;
-          // console.log(event)
+
           if (direction > 0){
-            if (thumb.y()+1 <= scrollbar.y()+barHeight-thumb.height())
+            if (thumb.y()+1 <= scrollbar.y()+scrollbar.height()-thumb.height()){
               thumb.y(thumb.y()+1);
+              barState('down')
+            }
           }
           else{
-            if (thumb.y()-1 >= scrollbar.y())
+            if (thumb.y()-1 >= scrollbar.y()){
               thumb.y(thumb.y()-1);
+              barState('up')
+            }
           }
         }
       });
-      // thumb.mouseover(function(){
-      //   action(colors.mouseover, 100, thumb);
-      //   defaultState = 'hover';
-      //   transition(defaultState);
-      // })
-      thumb.mouseout(function(){
-        action(colors.mouseout, 100, thumb);
-        defaultState = 'idle';
+      draw.mousedown(function(event){
+        var x = event.offsetX;
+        var y = event.offsetY;
+
+        var minX = thumb.x();
+        var maxX = thumb.x()+thumb.width();
+
+        var minY = thumb.y();
+        var maxY = thumb.y()+thumb.height();
+        // console.log(minX, x, maxX)
+        // console.log(minY, y, maxY)
+        // console.log(event)
+        if (((minX <= x) && (x <= maxX)) && ((minY <= y) && (y <= maxY)))   // make sure you click the thumb of the scroll bar
+        {
+          // console.log(minX, clientX, maxX)
+          action(colors.mousedown, 10, thumb);
+          defaultState = 'pressed-thumb';
+          transition(defaultState);
+        }
+
+      })
+
+      // thumb states
+      thumb.mouseover(function(){
+        // action(colors.mouseover, 100, thumb);
+        defaultState = 'hover-thumb';
         transition(defaultState);
       })
-      thumb.mousedown(function(){
-        action(colors.mousedown, 100, thumb);
-        defaultState = 'pressed';
-        transition(defaultState);
+      thumb.mouseout(function(){
+        if (defaultState != 'pressed-thumb'){
+          defaultState = 'idle';
+          action(colors.mouseout, 10, thumb);
+          transition(defaultState);
+        }
+      })
+
+      // bar states
+      bar.mouseover(function(){
+        transition('hover-bar');
+      });
+      bar.mouseout(function(){
+        transition('idle');
       })
 
       function transition(defaultState){
         if (stateEvent != null)
           stateEvent(defaultState);
       }
-
+      function barState(direction){
+        if (barMovedEvent != null){
+          barMovedEvent(direction);
+        }
+      }
       return {
         move: function(x,y){
           scrollbar.move(x, y);
         },
         stateChanged: function(eventHandler){
           stateEvent = eventHandler;
+        },
+        setHeight: function(height){
+          barHeight = height;
+          bar.height(height);
+        },
+        getThumbPosition: function(){
+          return [thumb.x(), thumb.y()];
+        },
+        barMoved: function(eventHandler){
+          barMovedEvent = eventHandler;
         }
       }
     }
 
+    var Slider = function(draw){
+      var slider = draw.group();
+      var sliderWidth = 300.0;
+      var colors = scrollbarColors;
+      var defaultState = 'idle';
+      var stateEvent = null;
+      var barMovedEvent = null;
+      var percentNumber = 0;
 
-return {Button, ToggleBox, CheckBox, RadioDials, RadioDial, TextBox, ProgressBar, ScrollBar}
+      var bar = slider.rect(sliderWidth, 4).fill({color: lighter}).stroke({color: 'black'});
+      var thumb = slider.rect(5, 17).fill({color: lighter_dim}).stroke({color: 'black'});
+      thumb.move(0, thumb.y() - 5);
+
+      var percent = slider.text(String(percentNumber)).fill({ color: 'black'});
+      percent.font({family: font_family});
+      percent.css({'pointer-events': 'none'});
+      percent.css({'user-select': 'none'});
+      percent.move(0, 20)
+
+
+      // states tracked in window
+      draw.mouseup(function(){
+        if (defaultState == 'pressed-thumb'){
+          // action(colors.mouseup, 0, thumb);
+          defaultState = "up";
+          transition(defaultState)
+        }
+        // else{
+        //   action(colors.mouseup, 10, thumb);
+        //   transition('up')
+        // }
+      });
+      draw.mousemove(function(event){
+        if (defaultState == 'pressed-thumb'){
+          var direction = event.movementX;
+          var pointerX = event.offsetX - thumb.x();
+          // console.log(event)
+          if (direction > 0){
+            // var movePointer = thumb.x()+pointerX;
+            if (thumb.x()+1 <= slider.x()+slider.width()-thumb.width()){
+              // thumb.x(movePointer);
+              thumb.x(thumb.x()+1)
+              barState('right');
+              percent.text(String(Math.ceil((++percentNumber/sliderWidth*100)+1)))
+            }
+          }
+          else{
+            if (thumb.x()-1 >= slider.x()){
+              thumb.x(thumb.x()-1);
+              barState('left')
+              percent.text(String(Math.round(--percentNumber/sliderWidth*100)))
+            }
+          }
+        }
+      });
+      draw.mousedown(function(event){
+        var x = event.offsetX;
+        var y = event.offsetY;
+
+        var minX = thumb.x();
+        var maxX = thumb.x()+thumb.width();
+
+        var minY = thumb.y();
+        var maxY = thumb.y()+thumb.height();
+        // console.log(minX, x, maxX)
+        // console.log(minY, y, maxY)
+        // console.log(event)
+        if (((minX <= x) && (x <= maxX)) && ((minY <= y) && (y <= maxY)))   // make sure you click the thumb of the scroll bar
+        {
+          // action(colors.mousedown, 0, thumb);
+          defaultState = 'pressed-thumb';
+          transition(defaultState);
+        }
+
+      })
+
+      // thumb states
+      thumb.mouseover(function(){
+        // action(colors.mouseover, 100, thumb);
+        defaultState = 'hover-thumb';
+        transition(defaultState);
+      })
+      // thumb.mouseout(function(){
+      //   if (defaultState != 'pressed-thumb'){
+      //     defaultState = 'idle';
+      //     // action(colors.mouseout, 0, thumb);
+      //     transition(defaultState);
+      //   }
+      // })
+
+      // bar states
+      bar.mouseover(function(){
+        transition('hover-bar');
+      });
+      bar.mouseout(function(){
+        transition('idle');
+      })
+
+      function transition(defaultState){
+        if (stateEvent != null)
+          stateEvent(defaultState);
+      }
+      function barState(direction){
+        if (barMovedEvent != null){
+          barMovedEvent(direction);
+        }
+      }
+      return {
+        move: function(x,y){
+          slider.move(x, y);
+        },
+        // stateChanged: function(eventHandler){
+        //   stateEvent = eventHandler;
+        // },
+        // setWidth: function(width){
+        //   sliderWidth  = width;
+        //   bar.width(width);
+        // },
+        getThumbPosition: function(){
+          return [thumb.x(), thumb.y()];
+        },
+        // barMoved: function(eventHandler){
+        //   barMovedEvent = eventHandler;
+        // }
+      }
+    }
+
+
+return {Button, ToggleBox, CheckBox, RadioDials, RadioDial, TextBox, ProgressBar, ScrollBar, Slider}
 }());
 
 export{MyToolkit}

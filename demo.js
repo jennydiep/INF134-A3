@@ -62,10 +62,10 @@ var radioDials = new MyToolkit.RadioDials(draw, 3);
 radioDials.setText(0, 'radio dial 1');
 radioDials.setText(1, 'radio dial 2');
 radioDials.setText(2, 'radio dial 3');
-radioDials.move(250, 200);
+radioDials.move(200, 200);
 
 radioDials.oncheck(function(e, i){
-	console.log(e, 'position:', i);
+	console.log(e, 'checked position:', i);
 });
 
 radioDials.stateChanged(function(e){
@@ -74,14 +74,30 @@ radioDials.stateChanged(function(e){
 
 //  ---------------------------------------------------------------  SCROLL BAR  --------------------------------------------------------------- //
 var scrollBar = new MyToolkit.ScrollBar(draw);
-scrollBar.move(500, 100)
+scrollBar.move(400, 100);
+scrollBar.setHeight(200);
+console.log(scrollBar.getThumbPosition());
 scrollBar.stateChanged(function(e){
-	console.log(e, ": scrollbar");
+	console.log(e, ": scrollbar", " position: ",scrollBar.getThumbPosition());
 });
+scrollBar.barMoved(function(direction){
+    console.log("scroll bar moving ", direction)
+})
 
 //  ----------------------------------------------------------------  TEXTBOX  ---------------------------------------------------------------- //
 var textBox = new MyToolkit.TextBox(draw);
 textBox.move(50,375)
+
+textBox.stateChanged(function(e){
+    console.log(e, ": textbox")
+});
+textBox.textChanged(function(e){
+    console.log(e, ":textbox changed, ", "getText():", textBox.getText())
+})
+
+//  --------------------------------------------------------------  SLIDER  -------------------------------------------------------------- //
+var slider = new MyToolkit.Slider(draw);
+slider.move(50, 550)
 
 //  --------------------------------------------------------------  PROGRESS BAR  -------------------------------------------------------------- //
 // PROGRESS BAR METHODS:
@@ -99,7 +115,6 @@ progressBar.move(50, 325)
 progressBar.setWidth(300);
 console.log("progressbar value: ", progressBar.getProgress())
 
-
 for(var i=0; i<=100; i++){
     progressBar.setProgress(i);
     await sleep(25);
@@ -112,7 +127,7 @@ for(var i=0; i<=100; i++){
 // sleep function - delay to animate progress bar
 function sleep (time) {
     return new Promise((resolve) => setTimeout(resolve, time));
-  }
+}
 
 
 
