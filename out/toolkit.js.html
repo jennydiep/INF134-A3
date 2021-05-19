@@ -1,4 +1,32 @@
-import {SVG} from './svg.min.js';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: toolkit.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: toolkit.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {SVG} from './svg.min.js';
 
 var primary = '#9370DB'
 var darker = '#7659b3'
@@ -274,7 +302,7 @@ var MyToolkit = (function() {
       var y = 0;
       var radioDialsList = []; 
 
-      for (var i=0; i<n; i++){
+      for (var i=0; i&lt;n; i++){
         var radioDial = new RadioDial(draw);
       
         radioDial.setId(i);  
@@ -287,7 +315,7 @@ var MyToolkit = (function() {
         dial.src().click(function(event){
           var id = dial.getId();
           action(primary, 150, dial.object())
-          for (var j=0; j<n; j++){
+          for (var j=0; j&lt;n; j++){
             if (j!=id){
               action(lighter, 150, radioDialsList[j].object())
             }
@@ -297,7 +325,7 @@ var MyToolkit = (function() {
 
       return {
         move: function(x, y) {
-          for (var i=0; i<radioDialsList.length; i++){
+          for (var i=0; i&lt;radioDialsList.length; i++){
             var radioY = radioDialsList[i].src().y();
             // var radioX = radioDialsList[i].src().x();
             radioDialsList[i].move(x, y+ radioY);
@@ -307,12 +335,12 @@ var MyToolkit = (function() {
           radioDialsList[position].setText(text);
         },
         stateChanged: function(eventHandler){
-          for (var i=0; i<radioDialsList.length; i++){
+          for (var i=0; i&lt;radioDialsList.length; i++){
             radioDialsList[i].stateChanged(eventHandler);
           }
         },
         oncheck: function(eventHandler){
-          for (var i=0; i<radioDialsList.length; i++){
+          for (var i=0; i&lt;radioDialsList.length; i++){
             radioDialsList[i].oncheck(eventHandler);
           }
         }, 
@@ -362,7 +390,7 @@ var MyToolkit = (function() {
             
             var x = text.x() + text.length() + 2;
             caret.move(x, textbox.y() + 2.5)
-            if (x <= textbox.x()){
+            if (x &lt;= textbox.x()){
               caret.x(rect.x()+ 3)
             }
             else{
@@ -435,7 +463,7 @@ var MyToolkit = (function() {
           bar.width(width)
         },
         incrementProgress: function(){
-          if (progressNumber < barWidth)
+          if (progressNumber &lt; barWidth)
             progressNumber += 1;
           progress.width(progressNumber);
 
@@ -495,7 +523,7 @@ var MyToolkit = (function() {
           var direction = event.movementY;
 
           if (direction > 0){
-            if (thumb.y()+1 <= scrollbar.y()+scrollbar.height()-thumb.height()){
+            if (thumb.y()+1 &lt;= scrollbar.y()+scrollbar.height()-thumb.height()){
               thumb.y(thumb.y()+1);
               barState('down')
             }
@@ -520,7 +548,7 @@ var MyToolkit = (function() {
         // console.log(minX, x, maxX)
         // console.log(minY, y, maxY)
         // console.log(event)
-        if (((minX <= x) && (x <= maxX)) && ((minY <= y) && (y <= maxY)))   // make sure you click the thumb of the scroll bar
+        if (((minX &lt;= x) &amp;&amp; (x &lt;= maxX)) &amp;&amp; ((minY &lt;= y) &amp;&amp; (y &lt;= maxY)))   // make sure you click the thumb of the scroll bar
         {
           // console.log(minX, clientX, maxX)
           action(colors.mousedown, 10, thumb);
@@ -617,7 +645,7 @@ var MyToolkit = (function() {
         if (defaultState == 'pressed-thumb'){
           var direction = event.movementX;
           if (direction > 0){
-            if (thumb.x()+1 <= slider.x()+slider.width()-thumb.width()){
+            if (thumb.x()+1 &lt;= slider.x()+slider.width()-thumb.width()){
               thumb.x(thumb.x()+1)
               barState('right');
               percent.text(String(Math.ceil((++percentNumber/sliderWidth*100)+1)))
@@ -641,7 +669,7 @@ var MyToolkit = (function() {
 
         var minY = thumb.y();
         var maxY = thumb.y()+thumb.height();
-        if (((minX <= x) && (x <= maxX)) && ((minY <= y) && (y <= maxY)))   // make sure you click the thumb of the scroll bar
+        if (((minX &lt;= x) &amp;&amp; (x &lt;= maxX)) &amp;&amp; ((minY &lt;= y) &amp;&amp; (y &lt;= maxY)))   // make sure you click the thumb of the scroll bar
         {
           defaultState = 'pressed-thumb';
           transition(defaultState);
@@ -719,3 +747,26 @@ function buttonActions(object, parentObject, colors, transition){
     transition(defaultState);
   })
 }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Button.html">Button</a></li><li><a href="CheckBox.html">CheckBox</a></li><li><a href="ProgressBar.html">ProgressBar</a></li><li><a href="RadioDials.html">RadioDials</a></li><li><a href="Slider.html">Slider</a></li><li><a href="TextBox.html">TextBox</a></li></ul><h3>Global</h3><ul><li><a href="global.html#MyToolkit">MyToolkit</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Wed May 19 2021 00:03:02 GMT-0700 (Pacific Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -5,4 +5,5 @@ title:  Home
 
 ## A3: Custom Graphical Toolkit
 
-[Documentation](docs.html)
+[Documentation](out/index.html)
+[Demo](demo.html)

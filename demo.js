@@ -2,6 +2,7 @@ import {MyToolkit} from './toolkit.js';
 
 // FOR ALL WIDGETS, MUST SPECIFY DRAW AS FIRST PARAMETER
 var draw = SVG().addTo('body').size('1000px', '1000px');
+console.log(typeof(draw))
 
 //  ----------------------------------------------------------------  BUTTON  ---------------------------------------------------------------- //
 // BUTTON METHODS:
