@@ -602,6 +602,7 @@ var MyToolkit = (function() {
       var defaultState = 'idle';
       var stateEvent = null;
       var barMovedEvent = null;
+      var previous = null;
 
       var bar = scrollbar.rect(17, barHeight).fill({color: lighter}).stroke({color: 'black'});
       var thumb = scrollbar.rect(17, 50).fill({color: lighter_dim}).stroke({color: 'black'});
@@ -619,23 +620,27 @@ var MyToolkit = (function() {
         // }
       });
       draw.mousemove(function(event){
+        if (previous == null){
+          previous = event.offsetY;
+        }
 
         if (defaultState == 'pressed-thumb'){
           var direction = event.movementY;
-
+          var move = event.offsetY - previous;
           if (direction > 0){
-            if (thumb.y()+1 <= scrollbar.y()+scrollbar.height()-thumb.height()){
-              thumb.y(thumb.y()+1);
+            if (thumb.y()+move <= scrollbar.y()+scrollbar.height()-thumb.height()){
+              thumb.y(thumb.y()+move);
               barState('down')
             }
           }
           else{
-            if (thumb.y()-1 >= scrollbar.y()){
-              thumb.y(thumb.y()-1);
+            if (thumb.y()+move >= scrollbar.y()){
+              thumb.y(thumb.y()+move);
               barState('up')
             }
           }
         }
+        previous = event.offsetY;
       });
       draw.mousedown(function(event){
         var x = event.offsetX;
@@ -756,6 +761,7 @@ var MyToolkit = (function() {
       var stateEvent = null;
       var barMovedEvent = null;
       var percentNumber = 0;
+      var previous = null;
 
       var bar = slider.rect(sliderWidth, 4).fill({color: lighter}).stroke({color: 'black'});
       var thumb = slider.circle(15).fill({color: lighter_dim}).stroke({color: 'black'});
@@ -777,23 +783,32 @@ var MyToolkit = (function() {
 
       });
       draw.mousemove(function(event){
+        if (previous == null){
+          previous = event.offsetX;
+        }
+
         if (defaultState == 'pressed-thumb'){
           var direction = event.movementX;
+          var move = event.offsetX - previous;
+
           if (direction > 0){
-            if (thumb.x()+1 <= slider.x()+slider.width()-thumb.width()){
-              thumb.x(thumb.x()+1)
+            if (thumb.x()+move <= slider.x()+slider.width()-thumb.width()){
+              thumb.x(thumb.x()+move)
               barState('right');
-              percent.text(String(Math.ceil((++percentNumber/sliderWidth*100)+5)))
+              percentNumber += move;
+              percent.text(String(Math.ceil((percentNumber/sliderWidth*100)+5)))
             }
           }
           else{
-            if (thumb.x()-1 >= slider.x()){
-              thumb.x(thumb.x()-1);
+            if (thumb.x()+move >= slider.x()){
+              thumb.x(thumb.x()+move);
               barState('left')
-              percent.text(String(Math.round(--percentNumber/sliderWidth*100)))
+              percentNumber += move;
+              percent.text(String(Math.round(percentNumber/sliderWidth*100)))
             }
           }
         }
+        previous = event.offsetX;
       });
       draw.mousedown(function(event){
         var x = event.offsetX;

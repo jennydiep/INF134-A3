@@ -73,7 +73,7 @@ radioDials.stateChanged(function(e){
 //  ---------------------------------------------------------------  SCROLL BAR  --------------------------------------------------------------- //
 var scrollBar = new MyToolkit.ScrollBar(draw);
 scrollBar.move(400, 100);
-scrollBar.setHeight(200);
+scrollBar.setHeight(250);
 console.log(scrollBar.getThumbPosition());
 scrollBar.stateChanged(function(e){
 	console.log(e, ": scrollbar", " position: ",scrollBar.getThumbPosition());
